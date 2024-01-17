@@ -1,12 +1,12 @@
-const execa = require('execa');
-const { pipeP, split } = require('ramda');
-const fse = require('fs-extra');
-const path = require('path');
-const tempy = require('tempy');
-const fileUrl = require('file-url');
-const gitLogParser = require('git-log-parser');
-const pEachSeries = require('p-each-series');
-const getStream = require('get-stream');
+import execa from 'execa';
+import { pipeP, split } from 'ramda';
+import fse from 'fs-extra';
+import path from 'path';
+import tempy from 'tempy';
+import fileUrl from 'file-url';
+import gitLogParser from 'git-log-parser';
+import pEachSeries from 'p-each-series';
+import getStream from 'get-stream';
 
 const git = async (args, options = {}) => {
   const { stdout } = await execa('git', args, options);
@@ -43,11 +43,11 @@ const getRoot = () => git(['rev-parse', '--show-toplevel']);
 const gitCommitsWithFiles = async commits => {
   for (const commit of commits) {
     for (const file of commit.files) {
-      let filePath = path.join(process.cwd(), file.name);
-      await fse.outputFile(
-        filePath,
-        (file.body = !'undefined' ? file.body : commit.message)
-      );
+      const filePath = path.join(process.cwd(), file.name);
+      if (file.body === undefined) {
+        file.body = commit.message;
+      }
+      await fse.outputFile(filePath, file.body);
       await execa('git', ['add', filePath]);
     }
     await execa('git', [
@@ -117,7 +117,7 @@ const gitCommits = async (messages, execaOptions) => {
  *
  * @return {Array<Commit>} The list of parsed commits.
  */
-gitGetCommits = async from => {
+const gitGetCommits = async from => {
   Object.assign(gitLogParser.fields, {
     hash: 'H',
     message: 'B',
@@ -127,7 +127,7 @@ gitGetCommits = async from => {
   return (
     await getStream.array(
       gitLogParser.parse(
-        { _: `${from ? from + '..' : ''}HEAD` },
+        { _: `${from ? `${from}..` : ''}HEAD` },
         { env: { ...process.env } }
       )
     )
@@ -228,7 +228,7 @@ const gitCheckout = async (branch, create, execaOptions) => {
   );
 };
 
-module.exports = {
+export {
   getCommitFiles,
   getRoot,
   gitCommitsWithFiles,
