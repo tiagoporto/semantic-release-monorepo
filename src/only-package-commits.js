@@ -1,12 +1,13 @@
-const { identity, memoizeWith, pipeP } = require('ramda');
-const pkgUp = require('pkg-up');
-const readPkg = require('read-pkg');
-const path = require('path');
-const pLimit = require('p-limit');
-const debug = require('debug')('semantic-release:monorepo');
-const { getCommitFiles, getRoot } = require('./git-utils');
-const { mapCommits } = require('./options-transforms');
+import { identity, memoizeWith, pipeP } from 'ramda';
+import pkgUp from 'pkg-up';
+import readPkg from 'read-pkg';
+import path from 'path';
+import pLimit from 'p-limit';
+import createDebug from 'debug';
+import { getCommitFiles, getRoot } from './git-utils.js';
+import { mapCommits } from './options-transforms.js';
 
+const debug = createDebug('semantic-release:monorepo');
 const memoizedGetCommitFiles = memoizeWith(identity, getCommitFiles);
 
 /**
@@ -89,8 +90,4 @@ const withOnlyPackageCommits = plugin => async (pluginConfig, config) => {
   );
 };
 
-module.exports = {
-  withOnlyPackageCommits,
-  onlyPackageCommits,
-  withFiles,
-};
+export { withOnlyPackageCommits, onlyPackageCommits, withFiles };
