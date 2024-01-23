@@ -55,5 +55,4 @@ const fail = wrapStep(
 
 const tagFormat = `${readPkg.sync().name}-v\${version}`;
 
-//TODO Change to esm export when https://github.com/semantic-release/semantic-release/pull/3037 is merged
-module.exports = { analyzeCommits, generateNotes, success, fail, tagFormat };
+export { analyzeCommits, generateNotes, success, fail, tagFormat };
