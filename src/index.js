@@ -53,6 +53,6 @@ const fail = wrapStep(
   }
 );
 
-const tagFormat = `${readPkg.sync().name}-v\${version}`;
+const tagFormat = `${readPkg.sync().name}@\${version}`;
 
 export { analyzeCommits, generateNotes, success, fail, tagFormat };
